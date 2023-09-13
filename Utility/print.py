@@ -16,6 +16,6 @@ def print_result(result):
     else:
         print(f"    Error: {result['result']},")  # 如果 "result" 不是列表，打印错误信息
     print("]")
-    print("===================================================")
+    print("==================================================")
     print()
     print()

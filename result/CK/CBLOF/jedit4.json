@@ -1,0 +1,37 @@
+{
+    "method": "CBLOF",
+    "dataset": "CK",
+    "subDataset": "jedit4",
+    "result": [
+        {
+            "train samples": "30",
+            "defective train samples": "7",
+            "precision": 0.6296296296296297,
+            "recall": 0.5,
+            "pf": 0.09615384615384616,
+            "F-measure": 0.5573770491803278,
+            "accuracy": 0.8043478260869565,
+            "AUC": 0.701923076923077
+        },
+        {
+            "train samples": "61",
+            "defective train samples": "15",
+            "precision": 0.6,
+            "recall": 0.45,
+            "pf": 0.0972972972972973,
+            "F-measure": 0.5142857142857143,
+            "accuracy": 0.7918367346938775,
+            "AUC": 0.6763513513513513
+        },
+        {
+            "train samples": "91",
+            "defective train samples": "22",
+            "precision": 0.5294117647058824,
+            "recall": 0.16981132075471697,
+            "pf": 0.04938271604938271,
+            "F-measure": 0.2571428571428572,
+            "accuracy": 0.7581395348837209,
+            "AUC": 0.5602143023526671
+        }
+    ]
+}

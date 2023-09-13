@@ -1,0 +1,37 @@
+{
+    "method": "CBLOF",
+    "dataset": "CK",
+    "subDataset": "lucene2",
+    "result": [
+        {
+            "train samples": "33",
+            "defective train samples": "20",
+            "precision": 0.9245283018867925,
+            "recall": 0.2677595628415301,
+            "pf": 0.03225806451612903,
+            "F-measure": 0.4152542372881356,
+            "accuracy": 0.5504885993485342,
+            "AUC": 0.6177507491627006
+        },
+        {
+            "train samples": "67",
+            "defective train samples": "40",
+            "precision": 0.84,
+            "recall": 0.25766871165644173,
+            "pf": 0.07272727272727272,
+            "F-measure": 0.3943661971830986,
+            "accuracy": 0.5274725274725275,
+            "AUC": 0.5924707194645844
+        },
+        {
+            "train samples": "101",
+            "defective train samples": "60",
+            "precision": 0.825,
+            "recall": 0.23076923076923078,
+            "pf": 0.07291666666666667,
+            "F-measure": 0.360655737704918,
+            "accuracy": 0.5104602510460251,
+            "AUC": 0.5789262820512822
+        }
+    ]
+}

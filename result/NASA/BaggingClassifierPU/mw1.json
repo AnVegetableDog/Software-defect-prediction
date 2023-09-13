@@ -1,0 +1,37 @@
+{
+    "method": "BaggingClassifierPU",
+    "dataset": "NASA",
+    "subDataset": "mw1",
+    "result": [
+        {
+            "train samples": "24",
+            "defective train samples": "2",
+            "precision": 0.047619047619047616,
+            "recall": 0.24,
+            "pf": 0.5882352941176471,
+            "F-measure": 0.07947019867549668,
+            "accuracy": 0.3930131004366812,
+            "AUC": 0.3258823529411764
+        },
+        {
+            "train samples": "50",
+            "defective train samples": "5",
+            "precision": 0.14782608695652175,
+            "recall": 0.7727272727272727,
+            "pf": 0.5414364640883977,
+            "F-measure": 0.24817518248175183,
+            "accuracy": 0.49261083743842365,
+            "AUC": 0.6156454043194375
+        },
+        {
+            "train samples": "75",
+            "defective train samples": "8",
+            "precision": 0.1794871794871795,
+            "recall": 0.7368421052631579,
+            "pf": 0.4025157232704403,
+            "F-measure": 0.288659793814433,
+            "accuracy": 0.6123595505617978,
+            "AUC": 0.6671631909963588
+        }
+    ]
+}

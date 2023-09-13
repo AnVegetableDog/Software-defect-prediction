@@ -1,0 +1,37 @@
+{
+    "method": "CBLOF",
+    "dataset": "CK",
+    "subDataset": "xalan2",
+    "result": [
+        {
+            "train samples": "79",
+            "defective train samples": "38",
+            "precision": 0.7159090909090909,
+            "recall": 0.18051575931232092,
+            "pf": 0.06666666666666667,
+            "F-measure": 0.28832951945080093,
+            "accuracy": 0.5704419889502762,
+            "AUC": 0.5569245463228272
+        },
+        {
+            "train samples": "160",
+            "defective train samples": "77",
+            "precision": 0.6721311475409836,
+            "recall": 0.13225806451612904,
+            "pf": 0.06006006006006006,
+            "F-measure": 0.22102425876010784,
+            "accuracy": 0.5505443234836703,
+            "AUC": 0.5360990022280345
+        },
+        {
+            "train samples": "240",
+            "defective train samples": "116",
+            "precision": 0.6774193548387096,
+            "recall": 0.15498154981549817,
+            "pf": 0.0684931506849315,
+            "F-measure": 0.2522522522522523,
+            "accuracy": 0.5577264653641207,
+            "AUC": 0.5432441995652832
+        }
+    ]
+}

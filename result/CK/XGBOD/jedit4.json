@@ -1,0 +1,37 @@
+{
+    "method": "XGBOD",
+    "dataset": "CK",
+    "subDataset": "jedit4",
+    "result": [
+        {
+            "train samples": "30",
+            "defective train samples": "7",
+            "precision": 0.34782608695652173,
+            "recall": 0.11764705882352941,
+            "pf": 0.07211538461538461,
+            "F-measure": 0.1758241758241758,
+            "accuracy": 0.7282608695652174,
+            "AUC": 0.5227658371040724
+        },
+        {
+            "train samples": "61",
+            "defective train samples": "15",
+            "precision": 0.43478260869565216,
+            "recall": 0.5,
+            "pf": 0.21081081081081082,
+            "F-measure": 0.46511627906976744,
+            "accuracy": 0.7183673469387755,
+            "AUC": 0.6445945945945946
+        },
+        {
+            "train samples": "91",
+            "defective train samples": "22",
+            "precision": 0.65,
+            "recall": 0.49056603773584906,
+            "pf": 0.08641975308641975,
+            "F-measure": 0.5591397849462365,
+            "accuracy": 0.8093023255813954,
+            "AUC": 0.7020731423247146
+        }
+    ]
+}

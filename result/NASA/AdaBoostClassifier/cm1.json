@@ -1,0 +1,37 @@
+{
+    "method": "AdaBoostClassifier",
+    "dataset": "NASA",
+    "subDataset": "cm1",
+    "result": [
+        {
+            "train samples": "32",
+            "defective train samples": "4",
+            "precision": 0.2,
+            "recall": 0.2631578947368421,
+            "pf": 0.1556420233463035,
+            "F-measure": 0.22727272727272727,
+            "accuracy": 0.7694915254237288,
+            "AUC": 0.5537579356952692
+        },
+        {
+            "train samples": "65",
+            "defective train samples": "8",
+            "precision": 0.3181818181818182,
+            "recall": 0.20588235294117646,
+            "pf": 0.06578947368421052,
+            "F-measure": 0.25,
+            "accuracy": 0.8396946564885496,
+            "AUC": 0.570046439628483
+        },
+        {
+            "train samples": "97",
+            "defective train samples": "12",
+            "precision": 0.18518518518518517,
+            "recall": 0.16666666666666666,
+            "pf": 0.11,
+            "F-measure": 0.17543859649122806,
+            "accuracy": 0.7956521739130434,
+            "AUC": 0.5283333333333333
+        }
+    ]
+}

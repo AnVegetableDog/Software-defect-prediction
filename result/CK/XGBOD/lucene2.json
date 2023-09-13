@@ -1,0 +1,37 @@
+{
+    "method": "XGBOD",
+    "dataset": "CK",
+    "subDataset": "lucene2",
+    "result": [
+        {
+            "train samples": "33",
+            "defective train samples": "20",
+            "precision": 0.6486486486486487,
+            "recall": 0.6557377049180327,
+            "pf": 0.5241935483870968,
+            "F-measure": 0.6521739130434783,
+            "accuracy": 0.5830618892508144,
+            "AUC": 0.565772078265468
+        },
+        {
+            "train samples": "67",
+            "defective train samples": "40",
+            "precision": 0.7215909090909091,
+            "recall": 0.7791411042944786,
+            "pf": 0.44545454545454544,
+            "F-measure": 0.7492625368731564,
+            "accuracy": 0.6886446886446886,
+            "AUC": 0.6668432794199666
+        },
+        {
+            "train samples": "101",
+            "defective train samples": "60",
+            "precision": 0.6891891891891891,
+            "recall": 0.7132867132867133,
+            "pf": 0.4791666666666667,
+            "F-measure": 0.7010309278350516,
+            "accuracy": 0.6359832635983264,
+            "AUC": 0.6170600233100233
+        }
+    ]
+}

@@ -5,48 +5,46 @@ import scipy.io
 import scipy.linalg
 
 
-# done!
+# 函数get_skewed_F_measure用于计算偏斜F度量值
 def get_skewed_F_measure(X1, X2, h1, h2, alpha):
-    TP = 0  # the number of defective instances that are predicted as defective (true judgment)
-    TN = 0  # the number of defect-free instances that are predicted as defect-free (true judgment)
-    FP = 0  # the number of defect-free instances that are predicted as defective (misjudgement)
-    FN = 0  # the number of defective instances that are predicted as defect-free (misjudgement)
+    # 初始化真正例、真负例、假正例、假负例的数量
+    TP = 0  # 预测为真实缺陷且正确的数量
+    TN = 0  # 预测为非缺陷且正确的数量
+    FP = 0  # 预测为非缺陷但错误的数量
+    FN = 0  # 预测为真实缺陷但错误的数量
 
-    # predicted defective instances
+    # 遍历预测为真实缺陷的实例
     n1 = len(X1)
     for i in range(0, n1):
-        # y = X1.pop(i)
         y = X1[i]
         X1 = np.delete(X1, i, axis=0)
         if get_label_of_y(X1, X2, h1, h2, y):
             TP = TP + 1
         else:
             FN = FN + 1
-        # X1.insert(i, y)
         X1 = np.insert(X1, i, y, axis=0)
 
-    # predicted defect-free instances
+    # 遍历预测为非缺陷的实例
     n2 = len(X2)
     for i in range(0, n2):
-        # y = X2.pop(i)
         y = X2[i]
         X2 = np.delete(X2, i, axis=0)
         if get_label_of_y(X1, X2, h1, h2, y):
             FP = FP + 1
         else:
             TN = TN + 1
-        # X2.insert(i, y)
         X2 = np.insert(X2, i, y, axis=0)
 
+    # 计算精确度、召回率、假正例率、真负例率和偏斜F度量值
     Recall = TP / (TP + FN)
     Precision = TP / (TP + FP)
-    Pf = FP / (FP + TN)  # false positive rate
-    TNR = 1 - Pf  # true negative rate
+    Pf = FP / (FP + TN)  # 假正例率
+    TNR = 1 - Pf  # 真负例率
     skewedFMeasure = (1 + alpha) * Precision * Recall / (alpha * Precision + Recall)
     return skewedFMeasure
 
 
-# done!
+# 函数get_H1_H2_for_I_SDA用于获取最优的子类别大小H1和H2
 def get_H1_H2_for_I_SDA(X1, X2, minSizeOfSubclass):
     n1 = len(X1)
     n2 = len(X2)
@@ -54,7 +52,7 @@ def get_H1_H2_for_I_SDA(X1, X2, minSizeOfSubclass):
     H2 = 0
     skewedFMeasure = -1
     subSize = minSizeOfSubclass
-    while subSize*2 <= n1 and subSize*2 <= n2:
+    while subSize * 2 <= n1 and subSize * 2 <= n2:
         h1 = round(n1 / subSize)
         h2 = round(n2 / subSize)
         sf = get_skewed_F_measure(X1, X2, h1, h2, 4)
@@ -62,12 +60,13 @@ def get_H1_H2_for_I_SDA(X1, X2, minSizeOfSubclass):
             skewedFMeasure = sf
             H1 = h1
             H2 = h2
-        print(('h1 = %d' % h1, 'subSize1 = %d' % (n1/h1)), ('h2 = %d' % h2, 'subSize2 = %d' % (n2/h2)), 'sf = %f' % sf)
+        print(('h1 = %d' % h1, 'subSize1 = %d' % (n1 / h1)), ('h2 = %d' % h2, 'subSize2 = %d' % (n2 / h2)),
+              'sf = %f' % sf)
         subSize = subSize + 1
     return H1, H2
 
 
-# done!
+# 函数sort_for_nnc用于对数据进行排序以用于最近邻分类
 def sort_for_nnc(X):
     n, m = X.shape
     sortedX = np.zeros(shape=(n, m))
@@ -84,34 +83,34 @@ def sort_for_nnc(X):
                 s = i
                 b = j
     sortedX[0] = X[s]
-    sortedX[n-1] = X[b]
+    sortedX[n - 1] = X[b]
     euclideanDistance[s][b] = float('inf')
     euclideanDistance[b][s] = float('inf')
-    for g in range(0, int((n-1)/2)):
+    for g in range(0, int((n - 1) / 2)):
         minDistance = float('inf')
         m = 0
         for j in range(0, n):
             if euclideanDistance[s][j] < minDistance and j != s:
                 minDistance = euclideanDistance[s][j]
                 m = j
-        sortedX[g+1] = X[m]
+        sortedX[g + 1] = X[m]
         euclideanDistance[s][m] = float('inf')
         euclideanDistance[b][m] = float('inf')
 
-        if g+1 != n-g-2:
+        if g + 1 != n - g - 2:
             minDistance = float('inf')
             k = 0
             for j in range(0, n):
                 if euclideanDistance[b][j] < minDistance and j != b:
                     minDistance = euclideanDistance[b][j]
                     k = j
-            sortedX[n-g-2] = X[k]
+            sortedX[n - g - 2] = X[k]
             euclideanDistance[s][k] = float('inf')
             euclideanDistance[b][k] = float('inf')
     return sortedX
 
 
-# done!
+# 函数NNC用于最近邻分类
 def NNC(X1, X2, H1, H2):
     sortedX1 = sort_for_nnc(X1)
     sortedX2 = sort_for_nnc(X2)
@@ -120,10 +119,9 @@ def NNC(X1, X2, H1, H2):
     return subX1, subX2
 
 
-# done!
-# subX1 : list of np.array
+# 函数get_sumB用于计算矩阵sumB
 def get_sumB(subX1, subX2, n1, n2):
-    n = n1 + n2  # the number of all samples
+    n = n1 + n2
     H1 = len(subX1)
     H2 = len(subX2)
     sum_B = 0
@@ -135,12 +133,12 @@ def get_sumB(subX1, subX2, n1, n2):
             p_2j = len(subX2[j]) / n
             u_2j = np.mean(subX2[j], axis=0)
             u_2j = np.array([u_2j.tolist()])
-            gap = u_1i-u_2j
-            sum_B = sum_B + (p_1i * p_2j * np.dot(gap.T, gap))  # different with the paper
+            gap = u_1i - u_2j
+            sum_B = sum_B + (p_1i * p_2j * np.dot(gap.T, gap))
     return sum_B
 
 
-# done!
+# 函数get_sumX用于计算矩阵sumX
 def get_sumX(X1, X2, n1, n2):
     u1 = np.mean(X1, axis=0)
     u2 = np.mean(X2, axis=0)
@@ -150,15 +148,15 @@ def get_sumX(X1, X2, n1, n2):
     for i in range(n1):
         x = np.array([X1[i].tolist()])
         gap = x - u
-        sum_X = sum_X + np.dot(gap, gap.T)  # different with the paper
+        sum_X = sum_X + np.dot(gap, gap.T)
     for i in range(n2):
         x = np.array([X2[i].tolist()])
         gap = x - u
-        sum_X = sum_X + np.dot(gap.T, gap)  # different with the paper
+        sum_X = sum_X + np.dot(gap.T, gap)
     return sum_X
 
 
-# done!
+# 函数get_V用于计算矩阵V
 def get_V(sumB, sumX):
     sumX_inv = np.linalg.pinv(sumX)
     dot = np.dot(sumX_inv, sumB)
@@ -172,7 +170,7 @@ def get_V(sumB, sumX):
     return np.real(np.array(V))
 
 
-# done!
+# 函数get_label_of_y用于预测y的标签
 def get_label_of_y(X1, X2, h1, h2, y):
     if len(y.shape) == 1:
         y = np.array([y.tolist()])
@@ -187,8 +185,8 @@ def get_label_of_y(X1, X2, h1, h2, y):
     V = get_V(sum_B, sum_X)
     # step 5
     X = np.concatenate((X1, X2), axis=0)
-    X_f = np.dot(V.T, X.T)  # different with the paper
-    y_f = np.dot(V.T, y.T)  # different with the paper
+    X_f = np.dot(V.T, X.T)
+    y_f = np.dot(V.T, y.T)
     # step 6
     labels1 = np.ones(n1, dtype='i4')
     labels2 = np.zeros(n2, dtype='i4')
@@ -199,7 +197,7 @@ def get_label_of_y(X1, X2, h1, h2, y):
     return predictions
 
 
-# done!
+# 函数kernel用于计算核函数
 def kernel(X1, X2, ker='primal', gamma=1):
     K = None
     if not ker or ker == 'primal':
@@ -217,17 +215,9 @@ def kernel(X1, X2, ker='primal', gamma=1):
     return K
 
 
+# 函数TCA用于域适应的特征转换
 def TCA(Xs, Xt, kernel_type='primal', dim=16, lamb=1, gamma=1):
-    """
-    Transform Xs and Xt
-    :param gamma: kernel bandwidth for rbf kernel
-    :param lamb: lambda value in equation
-    :param dim: dimension after transfer
-    :param kernel_type: kernel, values: 'primal' | 'linear' | 'rbf'
-    :param Xs: ns * n_feature, source feature
-    :param Xt: nt * n_feature, target feature
-    :return: Xs_new and Xt_new after TCA
-    """
+    # 将源域和目标域样本连接，并进行归一化处理
     X = np.hstack((Xs.T, Xt.T))
     X = X / np.linalg.norm(X, axis=0)
     m, n = X.shape
@@ -248,35 +238,31 @@ def TCA(Xs, Xt, kernel_type='primal', dim=16, lamb=1, gamma=1):
     return Xs_new, Xt_new
 
 
-# done!
+# 函数within_project_ISDA用于在同一项目中执行ISDA
 def within_project_ISDA(X1, X2, y, minSizeOfSubclass):
     n1 = len(X1)
     n2 = len(X2)
-    print(('n1 = %d' % n1, 'n2 = %d' % n2))
-    # step 1
-    # H1, H2 = get_H1_H2_for_I_SDA(X1, X2, minSizeOfSubclass)
     H1 = round(n1 / minSizeOfSubclass)
     H2 = round(n2 / minSizeOfSubclass)
-    print(('H1 = %d' % H1, 'subSize1 = %d' % (n1/H1)), ('H2 = %d' % H2, 'subSize2 = %d' % (n2/H2)))
-    # step 2 - 6
+    print(('n1 = %d' % n1, 'n2 = %d' % n2))
+    print(('H1 = %d' % H1, 'subSize1 = %d' % (n1 / H1)), ('H2 = %d' % H2, 'subSize2 = %d' % (n2 / H2)))
     predictions = get_label_of_y(X1, X2, H1, H2, y)
     return predictions
 
 
-# done!
+# 函数cross_project_SSTCA_ISDA用于跨项目的SSTCA-ISDA
 def cross_project_SSTCA_ISDA(Xs1, Xs2, Xt, minSizeOfSubclass):
     n1 = len(Xs1)
     n2 = len(Xs2)
     Xs = np.vstack((Xs1, Xs2))
-    # step 1
     Xs_new, Xt_new = TCA(Xs, Xt)
     Xs_new1 = Xs_new[: n1]
-    Xs_new2 = Xs_new[n1: n1+n2]
-    # step 2 - 3
+    Xs_new2 = Xs_new[n1: n1 + n2]
     predictions = within_project_ISDA(Xs_new1, Xs_new2, Xt, minSizeOfSubclass)
     return predictions
 
 
+# 类ImprovedSDA用于包装ISDA算法的两种执行方式
 class ImprovedSDA:
     def __init__(self, X1, X2, Xt, minSizeOfSubclass):
         """

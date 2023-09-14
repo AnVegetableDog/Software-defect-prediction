@@ -8,15 +8,22 @@ import os
 
 
 def run(data_train, data_test):
-    X1, X2 = train_data_process(data_train)
-    Y, y_true = test_data_process(data_test)
+    # 数据预处理：将训练数据和测试数据分别处理成合适的输入格式
+    X1, X2 = train_data_process(data_train)  # 处理训练数据
+    Y, y_true = test_data_process(data_test)  # 处理测试数据
+
     try:
+        # 创建ImprovedSDA分类器实例，使用训练数据进行模型训练
         clf = ImprovedSDA(X1, X2, Y, minSizeOfSubclass=5)
+
+        # 使用模型进行在项目内的缺陷预测
         y_pred = clf.within_predict()
-        TP = 0
-        FN = 0
-        FP = 0
-        TN = 0
+
+        # 计算混淆矩阵的各个值，用于后续性能评估
+        TP = 0  # 真正例数量（True Positives）
+        FN = 0  # 假负例数量（False Negatives）
+        FP = 0  # 假正例数量（False Positives）
+        TN = 0  # 真负例数量（True Negatives）
         for i, label in enumerate(y_true):
             if label:
                 if y_pred[i]:
@@ -28,26 +35,32 @@ def run(data_train, data_test):
                     FP += 1
                 else:
                     TN += 1
+
+        # 计算假正例率（False Positive Rate）
         if (FP + TN) == 0:
             pf = "no negative samples."
         else:
             pf = FP / (FP + TN)
 
         try:
+            # 计算AUC（Area Under the ROC Curve）
             auc = roc_auc_score(y_true, y_pred)
         except ValueError as e:
             auc = str(e)
+
+        # 返回性能指标的字典
         return {
             'train samples': str(data_train.shape[0]),
             'defective train samples': str(X1.shape[0]),
-            'precision': precision_score(y_true, y_pred),
-            'recall': recall_score(y_true, y_pred),
-            'pf': pf,
-            'F-measure': f1_score(y_true, y_pred),
-            'accuracy': accuracy_score(y_true, y_pred),
-            'AUC': auc
+            'precision': precision_score(y_true, y_pred),  # 精确度
+            'recall': recall_score(y_true, y_pred),  # 召回率
+            'pf': pf,  # 假正例率
+            'F-measure': f1_score(y_true, y_pred),  # F1分数
+            'accuracy': accuracy_score(y_true, y_pred),  # 准确度
+            'AUC': auc  # AUC
         }
     except ZeroDivisionError as e:
+        # 处理可能的异常情况，返回错误信息
         return str(e)
 
 

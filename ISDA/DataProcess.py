@@ -45,5 +45,5 @@ def test_data_process(data):
     y (numpy.ndarray): 包含测试样本的标签的NumPy数组，标签为0或1。
     """
     n, m = data.shape  # 获取数据集的行数和列数
-    X = data[:, 0:m - 1]  # 提取特征，即除最后一列之外的所有列
-    y = (data[:, m - 1] > 0).astype(int)  # 提取标签，并将标签转换为0或1
+    return data[:, 0:m - 1], (data[:, m - 1] > 0).astype(int)
+

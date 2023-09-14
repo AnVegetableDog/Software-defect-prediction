@@ -42,12 +42,12 @@ from sklearn.utils.multiclass import check_classification_targets
 from sklearn.ensemble import BaseEnsemble
 from sklearn.ensemble._base import _partition_estimators
 
-
 __all__ = ["BaggingClassifierPU"]
 
 MAX_INT = np.iinfo(np.int32).max
 
 
+# 用于生成随机样本索引，根据是否使用自助抽样（bootstrap）来选择样本。
 def _generate_indices(random_state, bootstrap, n_population, n_samples):
     """Draw randomly sampled indices."""
     # Draw sample indices
@@ -60,6 +60,7 @@ def _generate_indices(random_state, bootstrap, n_population, n_samples):
     return indices
 
 
+# 此函数生成用于构建每个基本估计器的随机特征和样本索引。对于PU学习，它确保包含一组平衡的正例（P）和未标记（U）样本。
 def _generate_bagging_indices(random_state, bootstrap_features,
                               bootstrap_samples, n_features, n_samples,
                               max_features, max_samples):
@@ -76,6 +77,7 @@ def _generate_bagging_indices(random_state, bootstrap_features,
     return feature_indices, sample_indices
 
 
+# 用于在并行作业中构建一组基本估计器，确保每个包中都有平衡的正例（P）和未标记（U）样本。
 def _parallel_build_estimators(n_estimators, ensemble, X, y, sample_weight,
                                seeds, total_n_estimators, verbose):
     """Private function used to build a batch of estimators within a job."""
@@ -105,7 +107,7 @@ def _parallel_build_estimators(n_estimators, ensemble, X, y, sample_weight,
 
         ################ MAIN MODIFICATION FOR PU LEARNING ##################
         iP = [pair[0] for pair in enumerate(y) if pair[1] == 1]
-        iU = [pair[0] for pair in enumerate(y) if pair[1] < 1]            
+        iU = [pair[0] for pair in enumerate(y) if pair[1] < 1]
         features, indices = _generate_bagging_indices(random_state,
                                                       bootstrap_features,
                                                       bootstrap, n_features,
@@ -113,8 +115,7 @@ def _parallel_build_estimators(n_estimators, ensemble, X, y, sample_weight,
                                                       max_samples)
         indices = [iU[i] for i in indices] + iP
         #####################################################################
-        
-        
+
         # Draw samples, using sample weights, and then fit
         if support_sample_weight:
             if sample_weight is None:
@@ -141,6 +142,7 @@ def _parallel_build_estimators(n_estimators, ensemble, X, y, sample_weight,
     return estimators, estimators_features
 
 
+# 用于在并行作业中计算基本估计器的（概率）预测。
 def _parallel_predict_proba(estimators, estimators_features, X, n_classes):
     """Private function used to compute (proba-)predictions within a job."""
     n_samples = X.shape[0]
@@ -167,6 +169,7 @@ def _parallel_predict_proba(estimators, estimators_features, X, n_classes):
     return proba
 
 
+# 用于在并行作业中计算基本估计器的对数概率预测。
 def _parallel_predict_log_proba(estimators, estimators_features, X, n_classes):
     """Private function used to compute log probabilities within a job."""
     n_samples = X.shape[0]
@@ -192,6 +195,7 @@ def _parallel_predict_log_proba(estimators, estimators_features, X, n_classes):
     return log_proba
 
 
+# 用于在并行作业中计算基本估计器的决策函数。
 def _parallel_decision_function(estimators, estimators_features, X):
     """Private function used to compute decisions within a job."""
     return sum(estimator.decision_function(X[:, features])
@@ -199,6 +203,10 @@ def _parallel_decision_function(estimators, estimators_features, X):
                                               estimators_features))
 
 
+# 这是一个抽象基类，定义了BaggingClassifierPU的核心逻辑。
+# 包括初始化方法、fit方法、_fit方法、_set_oob_score方法等。
+# _fit方法用于构建Bagging集成。
+# _set_oob_score方法用于计算袋外（out-of-bag）评估分数。
 class BaseBaggingPU(with_metaclass(ABCMeta, BaseEnsemble)):
     """Base class for Bagging PU meta-estimator.
 
@@ -233,6 +241,7 @@ class BaseBaggingPU(with_metaclass(ABCMeta, BaseEnsemble)):
         self.random_state = random_state
         self.verbose = verbose
 
+    # 构建Bagging集成。
     def fit(self, X, y, sample_weight=None):
         """Build a Bagging ensemble of estimators from the training
            set (X, y).
@@ -291,7 +300,7 @@ class BaseBaggingPU(with_metaclass(ABCMeta, BaseEnsemble)):
         random_state = check_random_state(self.random_state)
 
         self.y = y
-        
+
         # Convert data
         X, y = check_X_y(X, y, ['csr', 'csc'])
         if sample_weight is not None:
@@ -399,6 +408,7 @@ class BaseBaggingPU(with_metaclass(ABCMeta, BaseEnsemble)):
 
         return self
 
+    # 计算袋外（out-of-bag）评估分数
     @abstractmethod
     def _set_oob_score(self, X, y):
         """Calculate out of bag predictions and score."""
@@ -413,11 +423,11 @@ class BaseBaggingPU(with_metaclass(ABCMeta, BaseEnsemble)):
             # Operations accessing random_state must be performed identically
             # to those in `_parallel_build_estimators()`
             random_state = np.random.RandomState(seed)
-            
+
             ############ MAIN MODIFICATION FOR PU LEARNING ###############
             iP = [pair[0] for pair in enumerate(self.y) if pair[1] == 1]
-            iU = [pair[0] for pair in enumerate(self.y) if pair[1] < 1] 
-            
+            iU = [pair[0] for pair in enumerate(self.y) if pair[1] < 1]
+
             feature_indices, sample_indices = _generate_bagging_indices(
                 random_state, self.bootstrap_features, self.bootstrap,
                 self.n_features_, len(iU), self._max_features,
@@ -425,7 +435,7 @@ class BaseBaggingPU(with_metaclass(ABCMeta, BaseEnsemble)):
 
             sample_indices = [iU[i] for i in sample_indices] + iP
             ###############################################################
-            
+
             yield feature_indices, sample_indices
 
     @property
@@ -448,6 +458,8 @@ class BaseBaggingPU(with_metaclass(ABCMeta, BaseEnsemble)):
         return sample_masks
 
 
+# 这是BaseBaggingPU的具体实现，继承了BaseBaggingPU和ClassifierMixin。
+# 初始化方法：设置Bagging算法的各种参数，如基本估计器、基本估计器数量、采样参数等。
 class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
     """A Bagging PU classifier.
 
@@ -455,7 +467,7 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
     A bagging SVM to learn from positive and unlabeled examples (2013) by Mordelet and Vert
     http://dx.doi.org/10.1016/j.patrec.2013.06.010
     http://members.cbio.mines-paristech.fr/~jvert/svn/bibli/local/Mordelet2013bagging.pdf
-    
+
     Parameters
     ----------
     base_estimator : object or None, optional (default=None)
@@ -533,6 +545,7 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
         `oob_decision_function_` contains NaN.
 
     """
+
     def __init__(self,
                  base_estimator=None,
                  n_estimators=10,
@@ -559,11 +572,13 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
             random_state=random_state,
             verbose=verbose)
 
+    # 检查并设置基本估计器。
     def _validate_estimator(self):
         """Check the estimator and set the base_estimator_ attribute."""
         super(BaggingClassifierPU, self)._validate_estimator(
             default=DecisionTreeClassifier())
 
+    # 计算袋外（out-of-bag）评估分数。
     def _set_oob_score(self, X, y):
         n_samples = y.shape[0]
         n_classes_ = self.n_classes_
@@ -590,9 +605,8 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
                         predictions[i, p[j]] += 1
                         j += 1
 
-                        
         # Modified: no warnings about non-OOB points (i.e. positives)
-        with np.errstate(invalid='ignore'):  
+        with np.errstate(invalid='ignore'):
             oob_decision_function = (predictions /
                                      predictions.sum(axis=1)[:, np.newaxis])
             oob_score = accuracy_score(y, np.argmax(predictions, axis=1))
@@ -600,6 +614,7 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
         self.oob_decision_function_ = oob_decision_function
         self.oob_score_ = oob_score
 
+    # 用于验证输入标签y是否合法
     def _validate_y(self, y):
         y = column_or_1d(y, warn=True)
         check_classification_targets(y)
@@ -608,6 +623,7 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
 
         return y
 
+    # 进行预测，返回样本的类别标签。
     def predict(self, X):
         """Predict class for X.
 
@@ -630,6 +646,7 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
         return self.classes_.take((np.argmax(predicted_probabilitiy, axis=1)),
                                   axis=0)
 
+    # 预测类别的概率
     def predict_proba(self, X):
         """Predict class probabilities for X.
 
@@ -679,6 +696,7 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
 
         return proba
 
+    # 预测类别的对数概率
     def predict_log_proba(self, X):
         """Predict class log-probabilities for X.
 
@@ -734,6 +752,7 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
         else:
             return np.log(self.predict_proba(X))
 
+    # 返回平均的基本估计器的决策函数。
     @if_delegate_has_method(delegate='base_estimator')
     def decision_function(self, X):
         """Average of the decision functions of the base classifiers.
@@ -779,4 +798,3 @@ class BaggingClassifierPU(BaseBaggingPU, ClassifierMixin):
         decisions = sum(all_decisions) / self.n_estimators
 
         return decisions
-

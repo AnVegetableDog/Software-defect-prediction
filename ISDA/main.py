@@ -73,20 +73,26 @@ if __name__ == '__main__':
     for dataset in NASA:
         data_name_train = dataset + 'train'
         filepath_train = '../data/NASA/NASATrain/' + data_name_train + '.mat'
+
         data1_train, data2_train, data3_train = load_data(filepath_train, data_name_train)
         data_name_test = dataset + 'test'
+
         filepath_test = '../data/NASA/NASATest/' + data_name_test + '.mat'
         data1_test, data2_test, data3_test = load_data(filepath_test, data_name_test)
+
         result = {
             'method': clf_name,
             'dataset': 'NASA',
             'subDataset': dataset,
             'result': []
         }
+
         result['result'].append(run(data1_train, data1_test))
         result['result'].append(run(data2_train, data2_test))
         result['result'].append(run(data3_train, data3_test))
+
         print_result(result)
+
         dirs = "../result/NASA/" + clf_name + "/"
         if not os.path.exists(dirs):
             os.makedirs(dirs)
@@ -96,20 +102,26 @@ if __name__ == '__main__':
     for dataset in CK:
         data_name_train = dataset + 'train'
         filepath_train = '../data/CK/CKTrain/' + data_name_train + '.mat'
+
         data1_train, data2_train, data3_train = load_data(filepath_train, data_name_train)
         data_name_test = dataset + 'test'
+
         filepath_test = '../data/CK/CKTest/' + data_name_test + '.mat'
         data1_test, data2_test, data3_test = load_data(filepath_test, data_name_test)
+
         result = {
             'method': clf_name,
             'dataset': 'CK',
             'subDataset': dataset,
             'result': []
         }
+
         result['result'].append(run(data1_train, data1_test))
         result['result'].append(run(data2_train, data2_test))
         result['result'].append(run(data3_train, data3_test))
+
         print_result(result)
+
         dirs = "../result/CK/" + clf_name + "/"
         if not os.path.exists(dirs):
             os.makedirs(dirs)
